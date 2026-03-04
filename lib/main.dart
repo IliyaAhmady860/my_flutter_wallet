@@ -9,9 +9,18 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: HomeScreen());
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          surfaceTintColor: Colors.transparent,
+          backgroundColor: Color.fromARGB(255, 117, 142, 224),
+          elevation: 0,
+        ),
+      ),
+      home: const HomeScreen(),
+    );
   }
 }
