@@ -20,7 +20,7 @@ class HomeScreen extends ConsumerWidget {
         bottomNavigationBar: TabBar(
           tabs: [
             Tab(
-              icon: Icon(Icons.account_balance_wallet, color: Colors.indigo),
+              icon: Icon(Icons.history, color: Colors.blueGrey),
               text: "History",
             ),
             Tab(
