@@ -30,47 +30,9 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
         backgroundColor: Colors.white,
-        body: CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.all(16.0),
-              sliver: SliverToBoxAdapter(
-                child: Container(
-                  height: MediaQuery.of(context).size.height / 3,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withValues(alpha: 0.5),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset: const Offset(
-                          3,
-                          3,
-                        ), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.all(16.0),
-                    itemCount: 10,
-                    itemBuilder: (context, index) =>
-                        ListTile(title: Text('Wallet Item $index')),
-                  ),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: MediaQuery.of(context).size.height * (2 / 3),
-                color: Colors.blueAccent,
-                child: const Center(child: Text("More Wallet Details Here")),
-              ),
-            ),
-          ],
+        body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
+          children: [History(), Analytics()],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: FabCircularMenuPlus(
@@ -103,6 +65,102 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// Todo
+//* move this 2 widgets to a separate file called custom widgets.dart
+class History extends StatelessWidget {
+  const History({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(16.0),
+          sliver: SliverToBoxAdapter(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 3,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withValues(alpha: 0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(3, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.all(16.0),
+                itemCount: 10,
+                itemBuilder: (context, index) =>
+                    ListTile(title: Text('Wallet Item $index')),
+              ),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            height: MediaQuery.of(context).size.height * (2 / 3),
+            color: Colors.blueAccent,
+            child: const Center(child: Text("More Wallet Details Here")),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class Analytics extends StatelessWidget {
+  const Analytics({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(16.0),
+          sliver: SliverToBoxAdapter(
+            child: Container(
+              height: MediaQuery.of(context).size.height / 3,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withValues(alpha: 0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(3, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.all(16.0),
+                itemCount: 10,
+                itemBuilder: (context, index) =>
+                    ListTile(title: Text('Wallet Item $index')),
+              ),
+            ),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: Container(
+            height: MediaQuery.of(context).size.height * (2 / 3),
+            color: Colors.blueAccent,
+            child: const Center(child: Text("More Wallet Details Here")),
+          ),
+        ),
+      ],
     );
   }
 }
