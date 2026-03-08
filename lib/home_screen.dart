@@ -57,6 +57,12 @@ class HomeScreen extends ConsumerWidget {
               color: Colors.redAccent,
             ),
             IconButton(
+              style: IconButton.styleFrom(backgroundColor: Colors.white),
+              icon: const Icon(Icons.add, size: 40),
+              onPressed: () {},
+              color: Colors.black,
+            ),
+            IconButton(
               style: IconButton.styleFrom(backgroundColor: Colors.blue),
               icon: const Icon(Icons.trending_up, size: 40),
               onPressed: () {},

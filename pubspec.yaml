@@ -16,6 +16,7 @@ dependencies:
   fab_circular_menu_plus: ^0.0.4
   sqflite: ^2.4.2
   syncfusion_flutter_charts: ^32.2.8
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
