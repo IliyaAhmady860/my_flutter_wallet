@@ -23,3 +23,16 @@ class TransactionModel {
     };
   }
 }
+
+class MonthlyFinancials {
+  final String month;
+  final double income;
+  final double spending;
+  final double net;
+
+  MonthlyFinancials({
+    required this.month,
+    required this.income,
+    required this.spending,
+  }) : net = income - spending;
+}

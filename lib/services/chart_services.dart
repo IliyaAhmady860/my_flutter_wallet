@@ -1,4 +1,4 @@
-import 'package:syncfusion_flutter_charts/charts.dart' as charts;
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 //! ToDo
 // create a class for the chart services
