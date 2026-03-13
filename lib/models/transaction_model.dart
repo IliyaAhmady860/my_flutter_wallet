@@ -1,3 +1,10 @@
+//this is a model class for transactions
+//it is used to make a new transaction using
+//the transaction input screen which takes
+//the title, amount, transaction type, and date
+//this model is used inside the transaction input screen
+//also the db service file
+
 class TransactionModel {
   final String title;
   final double amount;
@@ -16,7 +23,7 @@ class TransactionModel {
       'title': title,
       'amount': amount,
       'transaction_type': transaction_type,
-      'date': date.toIso8601String(), // Store the date as a String
+      'date': date.toIso8601String(),
     };
   }
 }

@@ -3,6 +3,11 @@ import 'package:flutter/services.dart';
 import 'models/transaction_model.dart';
 import 'services/sqflite_db.dart';
 
+//this file is used as the screen to input the transactions
+//it has a form that takes the title, amount, type and date
+//and validate them
+//it also has a button to submit the form and add the transaction to the database
+
 enum transactionType { Expense, Income }
 
 class TransactionInput extends StatefulWidget {
@@ -42,20 +47,15 @@ class _TransactionInputState extends State<TransactionInput> {
       final newTransaction = TransactionModel(
         title: _titleController.text,
         amount: double.parse(_amountController.text),
-        // Use the radio button selection (converted to string for DB)
         transaction_type: _selectedTransactionType.toString(),
         date: DateTime.parse(_dateController.text),
       );
-
-      // 3. Pass it to your Database Helper
       await DatabaseHelper.instance.insertTransaction(newTransaction);
-
-      // 4. Close the screen and return to the list
       if (mounted) {
         Navigator.pop(
           context,
           true,
-        ); // Pass 'true' to tell the previous screen to refresh
+        ); // Pass true to tell the previous screen to refresh
       }
     }
   }

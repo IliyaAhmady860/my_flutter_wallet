@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:my_wallet/models/transaction_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 
+// this is the dart file to store the widgets for the tabs
+//also in future the widgets for the new tabs will be stored here if i change the design
+
 class Analytics extends StatefulWidget {
   const Analytics({super.key});
 

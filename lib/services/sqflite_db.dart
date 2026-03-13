@@ -2,6 +2,16 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:my_wallet/models/transaction_model.dart';
 
+// the data base file
+// it helps to store the transactions by initializing the database
+// it will also provide the basic methods to read and write to the database
+
+// ToDo
+//// make and init the database
+//// make a read and
+///write method for the database
+// make a delete method
+
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
@@ -38,11 +48,3 @@ class DatabaseHelper {
     return await db.insert('transactions', transaction.toMap());
   }
 }
-
-
-// ToDo
-// make and init the database
-// make a read and write method for the database
-// make a delete method
-
-

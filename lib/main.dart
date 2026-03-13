@@ -4,6 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_wallet/home_screen.dart';
 import 'package:my_wallet/transaction_input.dart';
 
+/// this is the main file of the app it is used to run the app
+/// its also used to make global themese and routing possible
+/// it also uses the provider package to make the state management possible
+/// currently the state management is not used but it will be used
+/// in the future if i decide to continue developing
+
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
