@@ -1,12 +1,10 @@
 class TransactionModel {
-  final int? id;
   final String title;
   final double amount;
   final String transaction_type;
   final DateTime date;
 
   TransactionModel({
-    this.id,
     required this.title,
     required this.amount,
     required this.transaction_type,
@@ -15,7 +13,6 @@ class TransactionModel {
 
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'title': title,
       'amount': amount,
       'transaction_type': transaction_type,

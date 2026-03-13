@@ -10,6 +10,8 @@ class Analytics extends StatefulWidget {
   State<Analytics> createState() => _FinancialReportScreenState();
 }
 
+//# this section is fake data and fake chart and it  would be deleted and replaced after
+//# the database is set up and the chart service is set up
 class _FinancialReportScreenState extends State<Analytics> {
   final List<MonthlyFinancials> yearlyData = [
     MonthlyFinancials(month: 'Jan', income: 4500, spending: 3200),
@@ -144,6 +146,7 @@ class _FinancialReportScreenState extends State<Analytics> {
                 ),
               ),
             ),
+            SizedBox(height: MediaQuery.of(context).size.height * (1 / 30)),
           ],
         ),
       ),

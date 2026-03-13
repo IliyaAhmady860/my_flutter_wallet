@@ -11,7 +11,6 @@ class HomeScreen extends ConsumerWidget {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
           title: Text(
             "Spendify",
             style: TextStyle(color: Colors.greenAccent.shade700),
@@ -20,20 +19,31 @@ class HomeScreen extends ConsumerWidget {
         bottomNavigationBar: TabBar(
           tabs: [
             Tab(
-              icon: Icon(Icons.trending_up, color: Colors.green),
-              text: "Analytics",
-            ),
-            Tab(
               icon: Icon(Icons.history, color: Colors.blueGrey),
               text: "History",
+            ),
+            Tab(
+              icon: Icon(Icons.trending_up, color: Colors.green),
+              text: "Analytics",
             ),
           ],
         ),
         backgroundColor: Colors.white,
         body: TabBarView(
           physics: const NeverScrollableScrollPhysics(),
-          children: [Analytics(), History()],
+          children: [History(), Analytics()],
         ),
+        floatingActionButton: FloatingActionButton(
+          shape: CircleBorder(
+            side: BorderSide(color: Colors.greenAccent.shade700),
+          ),
+          backgroundColor: Colors.greenAccent.shade700,
+          child: const Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context).pushNamed("/transaction_input");
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
