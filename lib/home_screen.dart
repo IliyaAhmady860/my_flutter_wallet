@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'custom_widgets/tab_bar_widgets.dart';
+import 'providers/transaction_provider.dart';
 
 //the main screen which include the basic layout of tabs
+//its using riverpod as the state management
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -41,8 +43,9 @@ class HomeScreen extends ConsumerWidget {
           ),
           backgroundColor: Colors.greenAccent.shade700,
           child: const Icon(Icons.add),
-          onPressed: () {
-            Navigator.of(context).pushNamed("/transaction_input");
+          onPressed: () async {
+            await Navigator.of(context).pushNamed("/transaction_input");
+            ref.read(transactionProvider.notifier).refresh();
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

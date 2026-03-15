@@ -8,7 +8,7 @@ import 'services/sqflite_db.dart';
 //and validate them
 //it also has a button to submit the form and add the transaction to the database
 
-enum transactionType { Expense, Income }
+enum transactionType { expense, income }
 
 class TransactionInput extends StatefulWidget {
   const TransactionInput({super.key});
@@ -19,7 +19,7 @@ class TransactionInput extends StatefulWidget {
 
 class _TransactionInputState extends State<TransactionInput> {
   final _formKey = GlobalKey<FormState>();
-  transactionType? _selectedTransactionType = transactionType.Expense;
+  transactionType? _selectedTransactionType = transactionType.expense;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
@@ -47,17 +47,26 @@ class _TransactionInputState extends State<TransactionInput> {
       final newTransaction = TransactionModel(
         title: _titleController.text,
         amount: double.parse(_amountController.text),
-        transaction_type: _selectedTransactionType.toString(),
+        transaction_type: _selectedTransactionType == transactionType.expense
+            ? 'expense'
+            : 'income',
         date: DateTime.parse(_dateController.text),
       );
       await DatabaseHelper.instance.insertTransaction(newTransaction);
       if (mounted) {
-        Navigator.pop(
-          context,
-          true,
-        ); // Pass true to tell the previous screen to refresh
+        Navigator.pop(context, true);
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    DateTime now = DateTime.now();
+    String year = now.year.toString();
+    String month = now.month.toString().padLeft(2, '0');
+    String day = now.day.toString().padLeft(2, '0');
+    _dateController.text = "$year-$month-$day";
   }
 
   @override
@@ -203,15 +212,15 @@ class _TransactionInputState extends State<TransactionInput> {
                 children: <Widget>[
                   Expanded(
                     child: RadioListTile<transactionType>(
-                      title: const Text('Expense'),
-                      value: transactionType.Expense,
+                      title: const Text('expense'),
+                      value: transactionType.expense,
                     ),
                   ),
                   Expanded(
                     child: RadioListTile<transactionType>(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Income'),
-                      value: transactionType.Income,
+                      title: const Text('income'),
+                      value: transactionType.income,
                     ),
                   ),
                 ],
@@ -228,10 +237,6 @@ class _TransactionInputState extends State<TransactionInput> {
         ),
         backgroundColor: Colors.greenAccent.shade700,
         onPressed: _onDonePressed,
-
-        // if (_formKey.currentState!.validate()) {
-        //   Navigator.pop(context);
-        // }
         child: Icon(Icons.done),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -1,7 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:my_wallet/models/transaction_model.dart';
-
 // the data base file
 // it helps to store the transactions by initializing the database
 // it will also provide the basic methods to read and write to the database
@@ -35,6 +34,7 @@ class DatabaseHelper {
   Future _createDB(Database db, int version) async {
     await db.execute('''
     CREATE TABLE transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       title TEXT NOT NULL,
       amount REAL NOT NULL,        
       transaction_type TEXT NOT NULL,          
@@ -46,5 +46,19 @@ class DatabaseHelper {
   Future<int> insertTransaction(TransactionModel transaction) async {
     final db = await instance.database;
     return await db.insert('transactions', transaction.toMap());
+  }
+
+  Future<List<TransactionModel>> getPagedTransactions(
+    int limit,
+    int offset,
+  ) async {
+    final db = await instance.database;
+    final result = await db.query(
+      'transactions',
+      limit: limit,
+      offset: offset,
+      orderBy: 'date DESC',
+    );
+    return result.map((json) => TransactionModel.fromMap(json)).toList();
   }
 }

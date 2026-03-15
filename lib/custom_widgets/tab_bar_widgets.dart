@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'package:my_wallet/models/transaction_model.dart';
+import 'package:my_wallet/providers/transaction_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 
 // this is the dart file to store the widgets for the tabs
@@ -157,49 +158,66 @@ class _FinancialReportScreenState extends State<Analytics> {
   }
 }
 
-class History extends StatelessWidget {
+class History extends ConsumerWidget {
   const History({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        SliverToBoxAdapter(
-          child: Container(
-            height: MediaQuery.of(context).size.height * (2 / 5),
-            color: Colors.blueAccent,
-            child: const Center(child: Text("More Wallet Details Here")),
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.all(16.0),
-          sliver: SliverToBoxAdapter(
-            child: Container(
-              height: MediaQuery.of(context).size.height * (1 / 3),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withValues(alpha: 0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(3, 3),
-                  ),
-                ],
-              ),
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.all(16.0),
-                itemCount: 10,
-                itemBuilder: (context, index) =>
-                    ListTile(title: Text('Wallet Item $index')),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final transactionAsync = ref.watch(transactionProvider);
+    final notifier = ref.read(transactionProvider.notifier);
+    return transactionAsync.when(
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (err, stack) => Center(child: Text('Error: $err')),
+      data: (transactions) {
+        return CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverToBoxAdapter(
+              child: Container(
+                height: MediaQuery.of(context).size.height * (2 / 5),
+                color: Colors.blueAccent,
+                child: const Center(child: Text("Total Balance")),
               ),
             ),
-          ),
-        ),
-      ],
+            SliverPadding(
+              padding: const EdgeInsets.all(16.0),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index < transactions.length) {
+                      final item = transactions[index];
+                      return Card(
+                        color: item.transaction_type == 'expense'
+                            ? Colors.red.shade50
+                            : Colors.green.shade50,
+                        child: ListTile(
+                          title: Text(item.title),
+                          trailing: Text("\$${item.amount}"),
+                        ),
+                      );
+                    } else {
+                      if (notifier.hasMore) {
+                        Future.microtask(
+                          () => ref
+                              .read(transactionProvider.notifier)
+                              .fetchMore(),
+                        );
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 32.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      } else {
+                        return const SizedBox.shrink();
+                      }
+                    }
+                  },
+                  childCount: transactions.length + (notifier.hasMore ? 1 : 0),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

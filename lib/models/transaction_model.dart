@@ -26,6 +26,15 @@ class TransactionModel {
       'date': date.toIso8601String(),
     };
   }
+
+  factory TransactionModel.fromMap(Map<String, dynamic> map) {
+    return TransactionModel(
+      title: map['title'] ?? '',
+      amount: (map['amount'] as num).toDouble(),
+      transaction_type: map['transaction_type'] ?? 'expense',
+      date: DateTime.parse(map['date']),
+    );
+  }
 }
 
 class MonthlyFinancials {
