@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:my_wallet/models/transaction_model.dart';
-import 'package:my_wallet/providers/transaction_provider.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
-
-// this is the dart file to store the widgets for the tabs
-//also in future the widgets for the new tabs will be stored here if i change the design
+import 'package:my_wallet/models/transaction_model.dart';
 
 class Analytics extends StatefulWidget {
   const Analytics({super.key});
@@ -154,70 +149,6 @@ class _FinancialReportScreenState extends State<Analytics> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class History extends ConsumerWidget {
-  const History({super.key});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final transactionAsync = ref.watch(transactionProvider);
-    final notifier = ref.read(transactionProvider.notifier);
-    return transactionAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (err, stack) => Center(child: Text('Error: $err')),
-      data: (transactions) {
-        return CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: Container(
-                height: MediaQuery.of(context).size.height * (2 / 5),
-                color: Colors.blueAccent,
-                child: const Center(child: Text("Total Balance")),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(16.0),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index < transactions.length) {
-                      final item = transactions[index];
-                      return Card(
-                        color: item.transaction_type == 'expense'
-                            ? Colors.red.shade50
-                            : Colors.green.shade50,
-                        child: ListTile(
-                          title: Text(item.title),
-                          trailing: Text("\$${item.amount}"),
-                        ),
-                      );
-                    } else {
-                      if (notifier.hasMore) {
-                        Future.microtask(
-                          () => ref
-                              .read(transactionProvider.notifier)
-                              .fetchMore(),
-                        );
-                        return const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 32.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    }
-                  },
-                  childCount: transactions.length + (notifier.hasMore ? 1 : 0),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
     );
   }
 }

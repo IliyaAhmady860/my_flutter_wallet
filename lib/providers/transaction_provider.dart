@@ -15,7 +15,13 @@ class TransactionNotifier extends AsyncNotifier<List<TransactionModel>> {
 
   @override
   Future<List<TransactionModel>> build() async {
-    return await DatabaseHelper.instance.getPagedTransactions(_limit, 0);
+    final items = await DatabaseHelper.instance.getPagedTransactions(_limit, 0);
+    if (items.length < _limit) {
+      _hasMore = false;
+    } else {
+      _hasMore = true;
+    }
+    return items;
   }
 
   Future<void> refresh() async {
