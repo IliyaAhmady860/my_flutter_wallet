@@ -1,151 +1,142 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
-import 'package:my_wallet/models/transaction_model.dart';
+import 'package:my_wallet/services/chart_services.dart';
+import 'package:my_wallet/providers/total_summery_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Analytics extends StatefulWidget {
+// this is the dart file to store the widgets for the analytics tab
+// it is using riverpod as the state management and also uses chart_services for the charts
+
+class Analytics extends ConsumerWidget {
   const Analytics({super.key});
 
   @override
-  State<Analytics> createState() => _FinancialReportScreenState();
-}
-
-//# this section is fake data and fake chart and it  would be deleted and replaced after
-//# the database is set up and the chart service is set up
-class _FinancialReportScreenState extends State<Analytics> {
-  final List<MonthlyFinancials> yearlyData = [
-    MonthlyFinancials(month: 'Jan', income: 4500, spending: 3200),
-    MonthlyFinancials(month: 'Feb', income: 4200, spending: 3800),
-    MonthlyFinancials(month: 'Mar', income: 5000, spending: 3100),
-    MonthlyFinancials(month: 'Apr', income: 4800, spending: 4900),
-    MonthlyFinancials(month: 'May', income: 5200, spending: 3500),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    // Calculate Yearly Totals for the Pie Chart
-    double totalIncome = yearlyData.fold(0, (sum, item) => sum + item.income);
-    double totalSpending = yearlyData.fold(
-      0,
-      (sum, item) => sum + item.spending,
-    );
-    double yearlyNet = totalIncome - totalSpending;
-
-    // Data for the Yearly Pie Chart
-    final List<Map<String, dynamic>> yearlyPieData = [
-      {
-        'label': 'Net Savings',
-        'value': yearlyNet > 0 ? yearlyNet : 0.0,
-        'color': Colors.teal,
-      },
-      {
-        'label': 'Total Expenses',
-        'value': totalSpending,
-        'color': Colors.redAccent,
-      },
-    ];
+  Widget build(BuildContext context, WidgetRef ref) {
+    final yearlySummaryAsync = ref.watch(yearlySummeryProvider);
+    final twelveMonthAsync = ref.watch(twelveMonthSummaryProvider);
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: SingleChildScrollView(
         child: Column(
           children: [
             const Padding(
-              padding: EdgeInsets.all(10.0),
+              padding: EdgeInsets.all(16.0),
               child: Text(
                 "Monthly Correlation",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * (1 / 3),
-              child: charts.SfCartesianChart(
-                primaryXAxis: const charts.CategoryAxis(),
-                primaryYAxis: const charts.NumericAxis(
-                  labelFormat: '\${value}',
-                ),
-                legend: const charts.Legend(
-                  isVisible: true,
-                  position: charts.LegendPosition.bottom,
-                ),
-                tooltipBehavior: charts.TooltipBehavior(enable: true),
-                series: <charts.CartesianSeries<MonthlyFinancials, String>>[
-                  charts.LineSeries<MonthlyFinancials, String>(
-                    name: 'Income',
-                    dataSource: yearlyData,
-                    xValueMapper: (MonthlyFinancials data, _) => data.month,
-                    yValueMapper: (MonthlyFinancials data, _) => data.income,
-                    color: Colors.green,
-                    width: 3, // Makes the line thicker
-                    markerSettings: const charts.MarkerSettings(
-                      isVisible: false,
-                    ),
+            twelveMonthAsync.when(
+              loading: () => const SizedBox(
+                height: 250,
+                child: Center(child: CircularProgressIndicator()),
+              ),
+              error: (err, _) => Text("Error loading correlation: $err"),
+              data: (historyData) => SizedBox(
+                height: MediaQuery.of(context).size.height * (2 / 5),
+                child: charts.SfCartesianChart(
+                  primaryXAxis: const charts.CategoryAxis(),
+                  legend: const charts.Legend(
+                    isVisible: true,
+                    position: charts.LegendPosition.bottom,
                   ),
-
-                  // 2. Spending Line
-                  charts.LineSeries<MonthlyFinancials, String>(
-                    name: 'Spending',
-                    dataSource: yearlyData,
-                    xValueMapper: (MonthlyFinancials data, _) => data.month,
-                    yValueMapper: (MonthlyFinancials data, _) => data.spending,
-                    color: Colors.red,
-                    width: 3,
-                    dashArray: <double>[5, 5],
-                    markerSettings: const charts.MarkerSettings(
-                      isVisible: false,
+                  tooltipBehavior: charts.TooltipBehavior(enable: true),
+                  series: <charts.CartesianSeries>[
+                    ChartService.buildLineSeries(
+                      name: 'Income',
+                      dataSource: historyData,
+                      xMapper: (data, _) => data.month,
+                      yMapper: (data, _) => data.income,
+                      color: Colors.green,
+                      isDashed: true,
                     ),
-                  ),
-                ],
+                    ChartService.buildLineSeries(
+                      name: 'Spending',
+                      dataSource: historyData,
+                      xMapper: (data, _) => data.month,
+                      yMapper: (data, _) => data.spending,
+                      color: Colors.red,
+                      isDashed: true,
+                    ),
+                    ChartService.buildLineSeries(
+                      name: 'savings',
+                      dataSource: historyData,
+                      xMapper: (data, _) => data.month,
+                      yMapper: (data, _) => data.income - data.spending,
+                      color: Colors.black,
+                      isDashed: false,
+                    ),
+                  ],
+                ),
               ),
             ),
-            const Text(
-              "Yearly Net Summary",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            const Padding(
+              padding: EdgeInsets.all(4.0),
+              child: Text("tap the above buttons to filter"),
             ),
-
-            SizedBox(
-              height: 300,
-              child: charts.SfCircularChart(
-                legend: const charts.Legend(isVisible: true),
-                series: <charts.CircularSeries<Map<String, dynamic>, String>>[
-                  charts.PieSeries<Map<String, dynamic>, String>(
-                    dataSource: yearlyPieData,
-                    xValueMapper: (Map data, _) => data['label'],
-                    yValueMapper: (Map data, _) => data['value'],
-                    pointColorMapper: (Map data, _) => data['color'],
-                    dataLabelSettings: const charts.DataLabelSettings(
-                      isVisible: true,
-                    ),
-                    // Explode the Savings slice
-                    explode: false,
-                  ),
-                ],
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Yearly Net Summary",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Card(
-                color: yearlyNet >= 0
-                    ? Colors.green.shade50
-                    : Colors.red.shade50,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text("Yearly Net:", style: TextStyle(fontSize: 18)),
-                      Text(
-                        "${yearlyNet >= 0 ? '+' : ''}\$${yearlyNet.toStringAsFixed(2)}",
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: yearlyNet >= 0 ? Colors.green : Colors.red,
+            yearlySummaryAsync.when(
+              loading: () => const CircularProgressIndicator(),
+              error: (err, _) => Text("Error loading summary: $err"),
+              data: (summary) {
+                final income = summary['income'] ?? 0.0;
+                final expense = summary['expense'] ?? 0.0;
+                final net = income - expense;
+                final List<ChartData> pieData = [
+                  ChartData('income', income, Colors.teal),
+                  ChartData('expense', expense, Colors.redAccent),
+                ];
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * (2 / 5),
+                      child: charts.SfCircularChart(
+                        legend: const charts.Legend(isVisible: true),
+                        series: ChartService.buildPieSeries(
+                          dataSource: pieData,
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: _buildSummaryCard(net),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard(double net) {
+    return Card(
+      elevation: 0,
+      color: net >= 0 ? Colors.green.shade50 : Colors.red.shade50,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text("Yearly Net:", style: TextStyle(fontSize: 16)),
+            Text(
+              "${net >= 0 ? '+' : ''}\$${net.toStringAsFixed(2)}",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: net >= 0 ? Colors.green : Colors.red,
               ),
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * (1 / 30)),
           ],
         ),
       ),

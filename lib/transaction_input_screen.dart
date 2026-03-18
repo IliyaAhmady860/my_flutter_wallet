@@ -72,6 +72,7 @@ class _TransactionInputState extends State<TransactionInput> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           "Add Transaction Details",
@@ -82,124 +83,135 @@ class _TransactionInputState extends State<TransactionInput> {
         key: _formKey,
         child: Column(
           children: [
-            TextFormField(
-              controller: _titleController,
-              autofocus: true,
-              style: TextStyle(color: Colors.black),
-              cursorColor: Colors.blueAccent.shade700,
-              decoration: InputDecoration(
-                labelText: "Transaction Name",
-                labelStyle: TextStyle(color: Colors.black),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent.shade700),
-                  borderRadius: BorderRadius.circular(25),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
+              child: TextFormField(
+                controller: _titleController,
+                autofocus: true,
+                style: TextStyle(color: Colors.black),
+                cursorColor: Colors.blueAccent.shade700,
+                decoration: InputDecoration(
+                  labelText: "Transaction Name",
+                  labelStyle: TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent.shade700),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent.shade700),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent.shade700),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 15,
-                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a name';
+                  }
+
+                  if (RegExp(r'^[0-9]').hasMatch(value)) {
+                    return 'Name cannot start with a number';
+                  }
+
+                  if (value.length > 20) {
+                    return 'Name must be 20 characters or less';
+                  }
+
+                  return null;
+                },
               ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a name';
-                }
-
-                if (RegExp(r'^[0-9]').hasMatch(value)) {
-                  return 'Name cannot start with a number';
-                }
-
-                if (value.length > 20) {
-                  return 'Name must be 20 characters or less';
-                }
-
-                return null;
-              },
             ),
 
-            Padding(padding: const EdgeInsets.all(5.0)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
+              child: TextFormField(
+                controller: _amountController,
+                style: TextStyle(color: Colors.black),
+                cursorColor: Colors.blueAccent.shade700,
+                decoration: InputDecoration(
+                  labelText: "Transaction Amount",
+                  hintText: "0.000",
+                  labelStyle: TextStyle(color: Colors.black),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent.shade700),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent.shade700),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
+                ),
 
-            TextFormField(
-              controller: _amountController,
-              style: TextStyle(color: Colors.black),
-              cursorColor: Colors.blueAccent.shade700,
-              decoration: InputDecoration(
-                labelText: "Transaction Amount",
-                hintText: "0.000",
-                labelStyle: TextStyle(color: Colors.black),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent.shade700),
-                  borderRadius: BorderRadius.circular(25),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,3}')),
+                ],
+
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent.shade700),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 15,
-                ),
+
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null ||
+                      value.isEmpty ||
+                      double.parse(value) == 0) {
+                    return 'Please enter an amount';
+                  }
+                  if (value == '.') {
+                    return 'Please enter a valid number';
+                  }
+                  if (double.parse(value) >= 9999999) {
+                    return 'Bigger Than 10 Million TOO RICH';
+                  }
+
+                  return null;
+                },
               ),
-
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,3}')),
-              ],
-
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter an amount';
-                }
-
-                return null;
-              },
             ),
 
-            Padding(padding: const EdgeInsets.all(5.0)),
-
-            TextFormField(
-              readOnly: true,
-              controller: _dateController,
-              keyboardType: TextInputType.datetime,
-              decoration: InputDecoration(
-                labelStyle: TextStyle(color: Colors.black),
-                labelText: "Transaction Date",
-                hintText: "YYYY-MM-DD",
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.calendar_today),
-                  onPressed: () => _selectDate(context),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(9, 9, 9, 9),
+              child: TextFormField(
+                readOnly: true,
+                controller: _dateController,
+                keyboardType: TextInputType.datetime,
+                decoration: InputDecoration(
+                  labelStyle: TextStyle(color: Colors.black),
+                  labelText: "Transaction Date",
+                  hintText: "YYYY-MM-DD",
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent.shade700),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blueAccent.shade700),
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
                 ),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent.shade700),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blueAccent.shade700),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 15,
-                ),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter or select a date';
+                  }
+                  return null;
+                },
               ),
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter or select a date';
-                }
-                return null;
-              },
             ),
-
-            Padding(padding: const EdgeInsets.all(10.0)),
 
             RadioGroup(
               groupValue: _selectedTransactionType,
@@ -209,16 +221,21 @@ class _TransactionInputState extends State<TransactionInput> {
                 });
               },
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
                     child: RadioListTile<transactionType>(
+                      contentPadding: EdgeInsets.fromLTRB(18, 0, 0, 0),
+                      activeColor: Colors.red.shade700,
                       title: const Text('expense'),
                       value: transactionType.expense,
                     ),
                   ),
+                  Padding(padding: const EdgeInsets.all(9)),
                   Expanded(
                     child: RadioListTile<transactionType>(
-                      contentPadding: EdgeInsets.zero,
+                      activeColor: Colors.green.shade700,
+                      contentPadding: EdgeInsets.fromLTRB(9, 0, 9, 0),
                       title: const Text('income'),
                       value: transactionType.income,
                     ),
@@ -237,7 +254,7 @@ class _TransactionInputState extends State<TransactionInput> {
         ),
         backgroundColor: Colors.greenAccent.shade700,
         onPressed: _onDonePressed,
-        child: Icon(Icons.done),
+        child: Icon(Icons.done, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );

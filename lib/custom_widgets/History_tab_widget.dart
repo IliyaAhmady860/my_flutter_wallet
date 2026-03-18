@@ -3,7 +3,10 @@ import 'package:my_wallet/providers/transaction_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 import 'package:my_wallet/services/chart_services.dart';
-import 'package:my_wallet/providers/monthly_summery_provider.dart';
+import 'package:my_wallet/providers/total_summery_provider.dart';
+
+// ToDO
+// solve the overflow text problems and make the user be able to swipe and delete
 
 // this is the dart file to store the widgets for the history tab
 
@@ -133,7 +136,7 @@ class History extends ConsumerWidget {
                     if (index < transactions.length) {
                       final item = transactions[index];
                       return Card(
-                        color: Colors.blueGrey,
+                        color: Colors.grey.shade200,
                         child: ListTile(
                           title: Text(
                             item.title,
@@ -141,6 +144,9 @@ class History extends ConsumerWidget {
                               color: item.transaction_type == 'expense'
                                   ? Colors.redAccent.shade400
                                   : Colors.greenAccent.shade700,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           trailing: item.transaction_type == 'expense'
@@ -149,6 +155,7 @@ class History extends ConsumerWidget {
                                   style: TextStyle(
                                     color: Colors.redAccent.shade400,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
                                 )
                               : Text(
@@ -156,6 +163,7 @@ class History extends ConsumerWidget {
                                   style: TextStyle(
                                     color: Colors.greenAccent.shade700,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 16,
                                   ),
                                 ),
                         ),
