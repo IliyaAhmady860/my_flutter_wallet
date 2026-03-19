@@ -6,6 +6,7 @@
 //also the db service file
 
 class TransactionModel {
+  final int? id;
   final String title;
   final double amount;
   final String transaction_type;
@@ -16,6 +17,7 @@ class TransactionModel {
     required this.amount,
     required this.transaction_type,
     required this.date,
+    this.id,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,6 +26,7 @@ class TransactionModel {
       'amount': amount,
       'transaction_type': transaction_type,
       'date': date.toIso8601String(),
+      'id': id,
     };
   }
 
@@ -33,6 +36,7 @@ class TransactionModel {
       amount: (map['amount'] as num).toDouble(),
       transaction_type: map['transaction_type'] ?? 'expense',
       date: DateTime.parse(map['date']),
+      id: map['id'] as int?,
     );
   }
 }

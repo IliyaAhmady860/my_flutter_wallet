@@ -48,6 +48,20 @@ class DatabaseHelper {
     return await db.insert('transactions', transaction.toMap());
   }
 
+  Future<void> deleteTransaction(TransactionModel transaction) async {
+    final db = await instance.database;
+    await db.delete(
+      'transactions',
+      where: 'id = ?',
+      whereArgs: [transaction.id],
+    );
+  }
+
+  Future<void> deleteAllTransactions() async {
+    final db = await instance.database;
+    await db.delete('transactions');
+  }
+
   Future<List<TransactionModel>> getPagedTransactions(
     int limit,
     int offset,

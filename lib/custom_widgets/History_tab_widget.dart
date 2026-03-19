@@ -4,9 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
 import 'package:my_wallet/services/chart_services.dart';
 import 'package:my_wallet/providers/total_summery_provider.dart';
-
-// ToDO
-// solve the overflow text problems and make the user be able to swipe and delete
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 // this is the dart file to store the widgets for the history tab
 
@@ -101,91 +99,116 @@ class History extends ConsumerWidget {
       error: (err, stack) => Center(child: Text('Error: $err')),
       data: (transactions) {
         final hasMore = ref.watch(transactionProvider.notifier).hasMore;
-        return CustomScrollView(
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverToBoxAdapter(
-              child: Container(
-                height: MediaQuery.of(context).size.height * (2 / 5),
-                color: Colors.transparent,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: Text(
-                          "Monthly Transactions Summary",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+        return SlidableAutoCloseBehavior(
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Container(
+                  height: MediaQuery.of(context).size.height * (2 / 5),
+                  color: Colors.transparent,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text(
+                            "Monthly Transactions Summary",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const MonthlyChart(),
-                  ],
+                      const MonthlyChart(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(16.0),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index < transactions.length) {
-                      final item = transactions[index];
-                      return Card(
-                        color: Colors.grey.shade200,
-                        child: ListTile(
-                          title: Text(
-                            item.title,
-                            style: TextStyle(
-                              color: item.transaction_type == 'expense'
-                                  ? Colors.redAccent.shade400
-                                  : Colors.greenAccent.shade700,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              overflow: TextOverflow.ellipsis,
+              SliverPadding(
+                padding: const EdgeInsets.all(16.0),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index < transactions.length) {
+                        final item = transactions[index];
+                        return Card(
+                          color: Colors.grey.shade200,
+                          child: Slidable(
+                            key: Key(item.id.toString()),
+                            endActionPane: ActionPane(
+                              motion: const ScrollMotion(),
+                              extentRatio: 0.25,
+                              children: [
+                                SlidableAction(
+                                  onPressed: (context) async {
+                                    notifier.deleteTransaction(item);
+                                    ref.invalidate(monthlySummaryProvider);
+                                    ref.invalidate(twelveMonthSummaryProvider);
+                                    ref.invalidate(yearlySummeryProvider);
+                                  },
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Delete',
+                                ),
+                              ],
+                            ),
+                            child: ListTile(
+                              title: Text(
+                                item.title,
+                                style: TextStyle(
+                                  color: item.transaction_type == 'expense'
+                                      ? Colors.redAccent.shade400
+                                      : Colors.greenAccent.shade700,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              trailing: item.transaction_type == 'expense'
+                                  ? Text(
+                                      "-\$${item.amount.toStringAsFixed(2)}",
+                                      style: TextStyle(
+                                        color: Colors.redAccent.shade400,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    )
+                                  : Text(
+                                      "+\$${item.amount.toStringAsFixed(2)}",
+                                      style: TextStyle(
+                                        color: Colors.greenAccent.shade700,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
                             ),
                           ),
-                          trailing: item.transaction_type == 'expense'
-                              ? Text(
-                                  "-\$${item.amount.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                    color: Colors.redAccent.shade400,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                )
-                              : Text(
-                                  "+\$${item.amount.toStringAsFixed(2)}",
-                                  style: TextStyle(
-                                    color: Colors.greenAccent.shade700,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                        ),
-                      );
-                    }
-                    if (hasMore && transactions.length >= 6) {
-                      Future.microtask(
-                        () =>
-                            ref.read(transactionProvider.notifier).fetchMore(),
-                      );
-                      return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Center(child: CircularProgressIndicator()),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                  childCount: transactions.length + (notifier.hasMore ? 1 : 0),
+                        );
+                      }
+                      if (hasMore && transactions.length >= 6) {
+                        Future.microtask(
+                          () => ref
+                              .read(transactionProvider.notifier)
+                              .fetchMore(),
+                        );
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                    childCount:
+                        transactions.length + (notifier.hasMore ? 1 : 0),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

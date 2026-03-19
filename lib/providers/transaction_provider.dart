@@ -54,4 +54,14 @@ class TransactionNotifier extends AsyncNotifier<List<TransactionModel>> {
       state = AsyncData([...currentData, ...newItems]);
     }
   }
+
+  Future<void> deleteTransaction(TransactionModel transaction) async {
+    await DatabaseHelper.instance.deleteTransaction(transaction);
+    ref.invalidateSelf();
+  }
+
+  Future<void> deleteAllTransactions() async {
+    await DatabaseHelper.instance.deleteAllTransactions();
+    ref.invalidateSelf();
+  }
 }
