@@ -2,6 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:my_wallet/services/sqflite_db.dart';
 import 'package:my_wallet/models/transaction_model.dart';
 
+/// this is the provider for the transactions loading custom scroll view
+/// this provider is used to load the transactions from the database
+/// delete a single transaction from the database or
+/// delete all transactions from the database
+
 final transactionProvider =
     AsyncNotifierProvider<TransactionNotifier, List<TransactionModel>>(() {
       return TransactionNotifier();
@@ -57,7 +62,7 @@ class TransactionNotifier extends AsyncNotifier<List<TransactionModel>> {
 
   Future<void> deleteTransaction(TransactionModel transaction) async {
     await DatabaseHelper.instance.deleteTransaction(transaction);
-    ref.invalidateSelf();
+    refresh();
   }
 
   Future<void> deleteAllTransactions() async {
