@@ -1,17 +1,10 @@
-# my_wallet
+Spenify 
 
-A new Flutter project.
+This app is my first soending tracker app built in flutter
+this app would not get any more update unless i get new ideas
 
-## Getting Started
+this app is used to track and analyze the user income vs spending
+it uses sqflite package to store the data locally inside a database
+and for my learning purpose it uses riverpod as the providers
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+If you used this app feel free to give your feedback
