@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:my_wallet/home_screen.dart';
-import 'package:my_wallet/transaction_input_screen.dart';
+import 'package:Spendify/home_screen.dart';
+import 'package:Spendify/transaction_input_screen.dart';
 
 /// this is the main file of the app it is used to run the app
 /// its also used to make global themese and routing possible

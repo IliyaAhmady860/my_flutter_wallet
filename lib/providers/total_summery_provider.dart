@@ -1,6 +1,6 @@
-import 'package:my_wallet/models/transaction_model.dart';
+import 'package:Spendify/models/transaction_model.dart';
 import 'package:riverpod/riverpod.dart';
-import 'package:my_wallet/services/sqflite_db.dart';
+import 'package:Spendify/services/sqflite_db.dart';
 
 //provides the summary of the month to the history tab for the chart and the chart service
 

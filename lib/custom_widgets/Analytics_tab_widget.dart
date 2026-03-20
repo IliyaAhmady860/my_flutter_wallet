@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart' as charts;
-import 'package:my_wallet/services/chart_services.dart';
-import 'package:my_wallet/providers/total_summery_provider.dart';
+import 'package:Spendify/services/chart_services.dart';
+import 'package:Spendify/providers/total_summery_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // this is the dart file to store the widgets for the analytics tab

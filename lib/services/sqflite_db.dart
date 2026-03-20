@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:my_wallet/models/transaction_model.dart';
+import 'package:Spendify/models/transaction_model.dart';
 // the data base file
 // it helps to store the transactions by initializing the database
 // it will also provide the basic methods to read and write to the database

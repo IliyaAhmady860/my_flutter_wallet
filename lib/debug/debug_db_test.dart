@@ -1,6 +1,6 @@
 import 'dart:math';
-import 'package:my_wallet/services/sqflite_db.dart';
-import 'package:my_wallet/models/transaction_model.dart';
+import 'package:Spendify/services/sqflite_db.dart';
+import 'package:Spendify/models/transaction_model.dart';
 
 //! 100% ai generated file to use as a function for a button to debug the database
 class DatabaseDebugger {
